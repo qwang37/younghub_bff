@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify
 from app.util.azure_storage_util import AzureStorageUtil
-from azure.storage.blob import BlobServiceClient
+from azure.storage.blob import BlobServiceClient, generate_blob_sas, BlobSasPermissions
+from datetime import datetime, timedelta
 
 # Replace with your Key Vault and secret name
 key_vault_name = "storage-account-01"
@@ -13,8 +14,9 @@ video_bp = Blueprint('videos', __name__)
 # Initialize the Azure Storage utility
 storage_util = AzureStorageUtil(key_vault_name=key_vault_name, secret_name=secret_name)
 
-# Function to list all video blobs in the container
-def list_video_blobs():
+
+# Function to list all video blobs in the container and generate SAS URLs
+def list_video_blobs_with_sas():
     # Get the connection string using the AzureStorageUtil class
     connection_string = storage_util.get_connection_string(account_name)
 
@@ -27,16 +29,33 @@ def list_video_blobs():
     # List blobs in the container
     blobs = container_client.list_blobs()
 
-    # Base URL for the blobs
-    video_url = f"https://{blob_service_client.account_name}.blob.core.windows.net/{container_name}"
+    # Prepare a list of videos (with SAS URLs)
+    video_list = []
+    for idx, blob in enumerate(blobs):
+        # Generate a SAS token for each blob
+        sas_token = generate_blob_sas(
+            account_name=account_name,
+            container_name=container_name,
+            blob_name=blob.name,
+            account_key=storage_util.get_storage_account_key(),  # Retrieve the account key from Key Vault
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)  # SAS token valid for 1 hour
+        )
 
-    # Prepare a list of videos (with IDs and URLs)
-    video_list = [{"ID": idx, "VideoURL": f"{video_url}/{blob.name}"} for idx, blob in enumerate(blobs)]
+        # Build the full SAS URL for the blob
+        sas_url = f"https://{account_name}.blob.core.windows.net/{container_name}/{blob.name}?{sas_token}"
+
+        # Append to the video list with the SAS URL
+        video_list.append({
+            "ID": idx,
+            "VideoURL": sas_url
+        })
 
     return video_list
 
-# Route to list all videos dynamically
+
+# Route to list all videos dynamically with SAS URLs
 @video_bp.route('/videos')
 def list_videos():
-    videos = list_video_blobs()
+    videos = list_video_blobs_with_sas()
     return jsonify(videos)

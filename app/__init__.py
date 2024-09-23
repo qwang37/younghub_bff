@@ -1,6 +1,6 @@
 from flask import Flask
 
-from app.api.auth import auth_bp
+from app.api.storage_auth import auth_bp
 from app.api.video import video_bp
 from app.api.cards import card_bp
 

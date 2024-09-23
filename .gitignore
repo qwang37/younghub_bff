@@ -1,0 +1,23 @@
+myenv/
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+env/
+venv/
+myenv/   # Your custom virtual environment
+
+# Logs
+*.log
+
+# IDE settings (optional, for PyCharm or VSCode users)
+.idea/
+.vscode/

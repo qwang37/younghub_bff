@@ -3,16 +3,13 @@ from app.util.azure_storage_util import AzureStorageUtil
 from azure.storage.blob import BlobServiceClient, generate_blob_sas, BlobSasPermissions
 from datetime import datetime, timedelta
 
-# Replace with your Key Vault and secret name
-key_vault_name = "storage-account-01"
-secret_name = "younghub-storage-key"
 account_name = 'younghubstorage'
 container_name = 'short-video'
 
 video_bp = Blueprint('videos', __name__)
 
 # Initialize the Azure Storage utility
-storage_util = AzureStorageUtil(key_vault_name=key_vault_name, secret_name=secret_name)
+storage_util = AzureStorageUtil()
 
 
 # Function to list all video blobs in the container and generate SAS URLs

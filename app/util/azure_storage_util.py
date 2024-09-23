@@ -3,12 +3,13 @@ from azure.keyvault.secrets import SecretClient
 from azure.storage.blob import generate_container_sas, ContainerSasPermissions
 from datetime import datetime, timedelta
 
+
 # Utility class to handle Azure Key Vault and Storage operations
 class AzureStorageUtil:
-    def __init__(self, key_vault_name, secret_name):
-        self.key_vault_name = key_vault_name
-        self.secret_name = secret_name
-        self.KVUri = f"https://{key_vault_name}.vault.azure.net/"
+    def __init__(self):
+        self.key_vault_name = "storage-account-01"
+        self.secret_name = "younghub-storage-key"
+        self.KVUri = f"https://{self.key_vault_name}.vault.azure.net/"
         self.credential = DefaultAzureCredential()  # Authenticate with Azure
 
     # Function to retrieve the storage account key from Key Vault

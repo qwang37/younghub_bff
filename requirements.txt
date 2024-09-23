@@ -1,4 +1,5 @@
 azure-core==1.30.2
+azure-cosmos==4.3.1
 azure-identity==1.17.1
 azure-keyvault-secrets==4.8.0
 azure-storage-blob==12.22.0
@@ -7,9 +8,13 @@ azure-storage-queue==12.11.0
 blinker==1.8.2
 certifi==2024.8.30
 cffi==1.17.1
+chardet==5.1.0
 charset-normalizer==3.3.2
 click==8.1.7
+colorama==0.4.6
 cryptography==43.0.1
+distlib==0.3.6
+filelock==3.12.0
 Flask==3.0.3
 gunicorn==23.0.0
 idna==3.8
@@ -20,11 +25,16 @@ MarkupSafe==2.1.5
 msal==1.30.0
 msal-extensions==1.2.0
 packaging==24.1
+pip-upgrade==0.0.6
+platformdirs==3.2.0
 portalocker==2.10.1
+pur==7.1.0
 pycparser==2.22
 PyJWT==2.9.0
 requests==2.32.3
 six==1.16.0
 typing_extensions==4.12.2
 urllib3==2.2.2
+virtualenv==20.22.0
+virtualenv-clone==0.5.7
 Werkzeug==3.0.4

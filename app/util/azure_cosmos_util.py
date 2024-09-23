@@ -57,7 +57,7 @@ class AzureCosmosUtil:
             result_list = []
             for item in items:
                 result_list.append({
-                    "ID": item.get("ID"),
+                    "OrderID": item.get("OrderID"),
                     "Title": item.get("Title"),
                     "Description": item.get("Description"),
                     "ContentURL": item.get("ContentURL"),

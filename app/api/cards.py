@@ -5,6 +5,6 @@ card_bp = Blueprint('cards', __name__)
 
 read_article_list = AzureCosmosUtil()
 
-@card_bp.route('/cards')
+@card_bp.route('/articles')
 def get_card():
     return read_article_list.read_article_list()

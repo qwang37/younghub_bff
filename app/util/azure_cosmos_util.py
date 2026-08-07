@@ -3,6 +3,7 @@ from azure.keyvault.secrets import SecretClient
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 
+
 class AzureCosmosUtil:
     def __init__(self):
         self.key_vault_name = "storage-account-01"
@@ -51,25 +52,27 @@ class AzureCosmosUtil:
     def _read_items(self, container, channel_id: str | None = None, top: int | None = None):
         try:
             if channel_id:
-                # 精确频道过滤（字符串比较）；若你的 ID 在库里是数字，可在这里加 CAST
                 query = """
                     SELECT
                         c.id, c.ID, c.OrderID, c.Title, c.Subtitle,
                         c.Description, c.DescriptionText, c.ContentURL,
                         c.RegistrationURL, c.Author, c.PictureURL, c.Location,
-                        c.StartDate, c.EndDate
+                        c.StartDate, c.EndDate, c.ContentHTML, c.PublishedAt,
+                        c.UpdatedAt, c.SourceURL, c.SourcePostID, c.ContentStatus,
+                        c.ContentType, c.FeaturedImageBlobURL, c.SyncVersion
                     FROM c
                     WHERE c.ID = @id
                 """
                 params = [{"name": "@id", "value": channel_id}]
             else:
-                # 返回全部（文章 + 活动），显式投影包含 ID 等字段
                 query = """
                     SELECT
                         c.id, c.ID, c.OrderID, c.Title, c.Subtitle,
                         c.Description, c.DescriptionText, c.ContentURL,
                         c.RegistrationURL, c.Author, c.PictureURL, c.Location,
-                        c.StartDate, c.EndDate
+                        c.StartDate, c.EndDate, c.ContentHTML, c.PublishedAt,
+                        c.UpdatedAt, c.SourceURL, c.SourcePostID, c.ContentStatus,
+                        c.ContentType, c.FeaturedImageBlobURL, c.SyncVersion
                     FROM c
                 """
                 params = []
@@ -83,7 +86,7 @@ class AzureCosmosUtil:
             result_list = []
             for item in items_iter:
                 # 直接把需要的字段返回给前端（缺失的字段给空字符串 / None）
-                result_list.append({
+                projected = {
                     "id": item.get("id", ""),
                     "ID": item.get("ID", ""),
                     "OrderID": item.get("OrderID"),
@@ -95,8 +98,18 @@ class AzureCosmosUtil:
                     "PictureURL": item.get("PictureURL", ""),
                     "Location": item.get("Location", ""),
                     "StartDate": item.get("StartDate", ""),
-                    "EndDate": item.get("EndDate", "")
-                })
+                    "EndDate": item.get("EndDate", ""),
+                    "ContentHTML": item.get("ContentHTML"),
+                    "PublishedAt": item.get("PublishedAt"),
+                    "UpdatedAt": item.get("UpdatedAt"),
+                    "SourceURL": item.get("SourceURL"),
+                    "SourcePostID": item.get("SourcePostID"),
+                    "ContentStatus": item.get("ContentStatus"),
+                    "ContentType": item.get("ContentType"),
+                    "FeaturedImageBlobURL": item.get("FeaturedImageBlobURL"),
+                    "SyncVersion": item.get("SyncVersion")
+                }
+                result_list.append(projected)
 
             if top is not None and top > 0:
                 result_list = result_list[:top]
